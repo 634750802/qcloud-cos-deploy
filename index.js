@@ -3,7 +3,7 @@ const fs = require('fs')
 const ora = require('ora')
 const COS = require('cos-nodejs-sdk-v5')
 
-module.exports = function ({bucket, region, secretId, secretKey, ignore, context, dir}) {
+module.exports = function ({bucket, region, secretId, secretKey, ignore, context, dir, force}) {
 
   let spinner = ora('Preparing Upload...').start()
   let total = 0
@@ -21,6 +21,12 @@ module.exports = function ({bucket, region, secretId, secretKey, ignore, context
   }
 
   async function upload (filename, file, contentLength) {
+    try {
+      await head(filename)
+      if (!force) {
+        return
+      }
+    } catch (e) {}
     return new Promise((resolve, reject) => {
       cos.putObject({
         ...common,
