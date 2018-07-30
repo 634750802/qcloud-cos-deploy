@@ -24,6 +24,8 @@ module.exports = function ({bucket, region, secretId, secretKey, ignore, context
     try {
       await head(filename)
       if (!force) {
+        done += 1
+        spinner.text = `[${done} / ${total}] ${file.path} used cache (use --force to ignore cache).`
         return
       }
     } catch (e) {}
